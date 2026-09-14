@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioSpark — Hands-on biology education for young scientists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EFE7D2;
+    --paper-dark: #E4D9BC;
+    --ink: #1A2A1E;
+    --ink-soft: #3A4A3E;
+    --spark: #D7F238;
+    --spark-dim: #b9d420;
+    --moss: #3F6B4A;
+    --ember: #E8722A;
+    --line: rgba(26,42,30,0.18);
+    --radius: 4px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(26,42,30,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    line-height:1.08;
+    letter-spacing:-0.01em;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--moss);
+    font-weight:600;
+  }
+
+  a{color:inherit; text-decoration:none;}
+
+  .wrap{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(239,231,210,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:76px;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.25rem;
+  }
+  .logo svg{width:26px; height:26px; flex-shrink:0;}
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:36px;
+    font-size:0.92rem;
+    font-weight:500;
+  }
+  .nav-links a{
+    position:relative;
+    padding:4px 0;
+  }
+  .nav-links a:not(.btn)::after{
+    content:'';
+    position:absolute;
+    left:0; right:0; bottom:-2px;
+    height:2px;
+    background:var(--spark);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .25s ease;
+  }
+  .nav-links a:not(.btn):hover::after{transform:scaleX(1);}
+  .nav-links .navlist{display:flex; gap:36px;}
+
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.8rem;
+    font-weight:600;
+    letter-spacing:0.03em;
+    padding:11px 20px;
+    border-radius:var(--radius);
+    border:1.5px solid var(--ink);
+    display:inline-block;
+    transition:all .2s ease;
+  }
+  .btn-solid{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .btn-solid:hover{background:var(--moss); border-color:var(--moss);}
+  .btn-ember{
+    background:var(--ember);
+    color:var(--paper);
+    border-color:var(--ember);
+  }
+  .btn-ember:hover{background:#cf5f19; border-color:#cf5f19;}
+  .btn-outline{background:transparent; color:var(--ink);}
+  .btn-outline:hover{background:var(--ink); color:var(--paper);}
+
+  /* mobile nav toggle */
+  .nav-toggle{display:none; background:none; border:none; cursor:pointer;}
+  .nav-toggle svg{width:26px; height:26px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:96px 0 110px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    gap:56px;
+    align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 5vw, 3.6rem);
+    margin:18px 0 22px;
+  }
+  .hero h1 .highlight{
+    background:linear-gradient(to top, var(--spark) 42%, transparent 42%);
+    padding:0 2px;
+  }
+  .hero p.lede{
+    font-size:1.13rem;
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin-bottom:34px;
+  }
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+
+  .hero-art{
+    position:relative;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .hero-art svg{width:100%; height:100%;}
+
+  /* ---------- STATS (specimen cards) ---------- */
+  .stats{
+    padding:70px 0 90px;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:var(--paper-dark);
+  }
+  .stats-head{margin-bottom:40px;}
+  .stats-head h2{font-size:1.6rem;}
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+  }
+  .stat-card{
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:28px 24px 24px;
+    position:relative;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .stat-card:hover{
+    transform:translateY(-4px);
+    box-shadow:5px 5px 0 var(--ink);
+  }
+  .stat-card .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    color:var(--moss);
+    position:absolute;
+    top:-10px;
+    left:20px;
+    background:var(--spark);
+    padding:2px 8px;
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+  }
+  .stat-num{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:3rem;
+    margin-top:10px;
+    letter-spacing:-0.02em;
+  }
+  .stat-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    margin-top:6px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+
+  /* ---------- SECTION shared ---------- */
+  section{padding:96px 0;}
+  .section-head{margin-bottom:48px; max-width:620px;}
+  .section-head h2{font-size:2.1rem; margin-top:10px;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:0.8fr 1.2fr;
+    gap:64px;
+    align-items:center;
+  }
+  .polaroid{
+    background:#fff;
+    border:1px solid var(--line);
+    padding:16px 16px 56px;
+    box-shadow:6px 8px 0 rgba(26,42,30,0.12);
+    transform:rotate(-2.5deg);
+    max-width:340px;
+    position:relative;
+  }
+  .polaroid .photo{
+    width:100%;
+    aspect-ratio:4/5;
+    background: linear-gradient(135deg, var(--moss) 0%, #2c4d34 100%);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .polaroid .photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center 22%;
+    display:block;
+  }
+  .polaroid .cap{
+    position:absolute;
+    bottom:16px; left:16px; right:16px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+  }
+  .tape{
+    position:absolute;
+    top:-14px; left:50%;
+    transform:translateX(-50%) rotate(-1deg);
+    width:90px; height:28px;
+    background:rgba(215,242,56,0.55);
+    border:1px solid rgba(26,42,30,0.15);
+  }
+  .about-copy .eyebrow{margin-bottom:12px;}
+  .about-copy h2{margin-bottom:18px; font-size:2rem;}
+  .about-copy p{color:var(--ink-soft); margin-bottom:16px; max-width:56ch;}
+  .about-copy .founder-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.15rem;
+    color:var(--ink);
+    margin-top:22px;
+  }
+  .about-copy .founder-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.8rem;
+    color:var(--moss);
+    letter-spacing:0.03em;
+  }
+
+  /* ---------- PROGRAMS ---------- */
+  .programs{background:var(--paper-dark); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .programs-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+  }
+  .program-card{
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:34px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .program-card:hover{
+    transform:translateY(-4px);
+    box-shadow:6px 6px 0 var(--ink);
+  }
+  .program-icon{
+    width:46px; height:46px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--ink);
+    border-radius:50%;
+    color:var(--spark);
+  }
+  .program-icon svg{width:22px; height:22px;}
+  .program-season{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--moss);
+  }
+  .program-card h3{font-size:1.4rem; margin-top:2px;}
+  .program-card p{color:var(--ink-soft); font-size:0.96rem;}
+  .program-list{
+    list-style:none;
+    margin-top:6px;
+    font-size:0.9rem;
+    color:var(--ink-soft);
+  }
+  .program-list li{
+    padding-left:18px;
+    position:relative;
+    margin-bottom:6px;
+  }
+  .program-list li::before{
+    content:'';
+    position:absolute;
+    left:0; top:9px;
+    width:7px; height:7px;
+    background:var(--spark);
+    border:1px solid var(--ink);
+    border-radius:1px;
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{
+    display:block;
+  }
+  .contact-info p{color:var(--ink-soft); margin-bottom:22px; max-width:40ch;}
+  .contact-row{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:18px;
+    font-size:0.95rem;
+  }
+  .contact-row svg{width:19px; height:19px; margin-top:2px; flex-shrink:0; color:var(--moss);}
+  .contact-row .label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--moss);
+    display:block;
+    margin-bottom:2px;
+  }
+
+  form{
+    background:var(--paper-dark);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:32px;
+  }
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+    color:var(--ink-soft);
+  }
+  .field input, .field textarea{
+    width:100%;
+    padding:12px 14px;
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+    font-family:'Inter', sans-serif;
+    font-size:0.95rem;
+    color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus{
+    outline:2px solid var(--spark);
+    outline-offset:1px;
+  }
+  .field textarea{resize:vertical; min-height:110px;}
+  form .btn{width:100%; text-align:center; cursor:pointer; font-size:0.85rem; padding:13px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:38px 0;
+    border-top:1px solid var(--line);
+  }
+  .footer-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:14px;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+  }
+  .footer-row .logo{font-size:1rem;}
+
+  /* reveal-on-scroll */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .reveal.in{opacity:1; transform:none;}
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 860px){
+    .hero-grid, .about-grid, .contact-grid{grid-template-columns:1fr;}
+    .hero-art{max-width:340px; margin:0 auto;}
+    .stats-grid{grid-template-columns:1fr;}
+    .programs-grid{grid-template-columns:1fr;}
+    .about-grid{gap:40px;}
+    .polaroid{margin:0 auto;}
+    .nav-links .navlist{
+      position:fixed;
+      top:76px; left:0; right:0;
+      background:var(--paper);
+      flex-direction:column;
+      align-items:flex-start;
+      padding:24px 32px;
+      border-bottom:1px solid var(--line);
+      gap:18px;
+      display:none;
+    }
+    .nav-links .navlist.open{display:flex;}
+    .nav-links{gap:14px;}
+    .nav-toggle{display:block;}
+    .nav-donate{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="#top" class="logo">
+      <svg viewBox="0 0 26 26" fill="none">
+        <circle cx="13" cy="13" r="12" fill="#1A2A1E"/>
+        <path d="M13 5 L15.2 11 L21.5 11 L16.3 14.8 L18.4 21 L13 17 L7.6 21 L9.7 14.8 L4.5 11 L10.8 11 Z" fill="#D7F238"/>
+      </svg>
+      BioSpark
+    </a>
+    <div class="nav-links">
+      <button class="nav-toggle" aria-label="Toggle menu" id="navToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="navlist" id="navList">
+        <a href="#about">About</a>
+        <a href="#programs">Programs</a>
+        <a href="#contact">Contact</a>
+        <a href="#contact" class="btn btn-ember">Donate</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Nonprofit · Hands-on biology education</span>
+        <h1>We turn curious kids into <span class="highlight">working scientists.</span></h1>
+        <p class="lede">BioSpark runs hands-on biology camps and after-school workshops that get students exploring — not just reading about it in a textbook. Every chapter, every camp, every kid: a little spark that catches.</p>
+        <div class="hero-ctas">
+          <a href="#programs" class="btn btn-solid">See our programs</a>
+          <a href="#contact" class="btn btn-outline">Get in touch</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <svg viewBox="0 0 400 400" fill="none">
+          <circle cx="200" cy="200" r="150" fill="none" stroke="#1A2A1E" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.35"/>
+          <path d="M200 90 C230 140, 260 150, 200 200 C140 250, 170 260, 200 310" stroke="#3F6B4A" stroke-width="2.5" fill="none"/>
+          <circle cx="200" cy="90" r="7" fill="#D7F238" stroke="#1A2A1E" stroke-width="1.5"/>
+          <circle cx="200" cy="200" r="9" fill="#E8722A" stroke="#1A2A1E" stroke-width="1.5"/>
+          <circle cx="200" cy="310" r="7" fill="#D7F238" stroke="#1A2A1E" stroke-width="1.5"/>
+          <path d="M120 150 Q160 120 200 90" stroke="#1A2A1E" stroke-width="1.2" fill="none" opacity="0.4"/>
+          <path d="M280 150 Q240 120 200 90" stroke="#1A2A1E" stroke-width="1.2" fill="none" opacity="0.4"/>
+          <path d="M120 260 Q160 290 200 310" stroke="#1A2A1E" stroke-width="1.2" fill="none" opacity="0.4"/>
+          <path d="M280 260 Q240 290 200 310" stroke="#1A2A1E" stroke-width="1.2" fill="none" opacity="0.4"/>
+          <g opacity="0.9">
+            <path d="M200 20 L204 34 L218 34 L207 43 L211 57 L200 48 L189 57 L193 43 L182 34 L196 34 Z" fill="#D7F238" stroke="#1A2A1E" stroke-width="1"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="wrap">
+      <div class="stats-head reveal">
+        <span class="eyebrow">Field tally</span>
+        <h2>The impact so far</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <span class="tag">No. 01</span>
+          <div class="stat-num">X</div>
+          <div class="stat-label">Camps run</div>
+        </div>
+        <div class="stat-card reveal">
+          <span class="tag">No. 02</span>
+          <div class="stat-num">Y+</div>
+          <div class="stat-label">Students sparked</div>
+        </div>
+        <div class="stat-card reveal">
+          <span class="tag">No. 03</span>
+          <div class="stat-num">Z</div>
+          <div class="stat-label">Chapters growing</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap about-grid">
+      <div class="polaroid reveal">
+        <div class="tape"></div>
+        <div class="photo"><img src="assets/founder-headshot.jpg" alt="David Anand, founder of BioSpark"></div>
+        <div class="cap">Meet the founder →</div>
+      </div>
+      <div class="about-copy reveal">
+        <span class="eyebrow">About us</span>
+        <h2>Meet the founder</h2>
+        <p>I didn't hear the word "bioinformatics" until I was heading into my senior year of high school — and once I found it, I couldn't stop thinking about how much earlier I wished I'd known. Bioinformatics sits right at the intersection of biology and computer science, and discovering it reframed what studying science could even look like for me.</p>
+        <p>I started BioSpark to close that gap for the next kid. Through hands-on camps and chapter-based workshops, students get to explore bioinformatics and biology years before they'd normally encounter it — so the spark catches early, not by accident senior year.</p>
+        <div class="founder-name">David Anand</div>
+        <div class="founder-title">Founder, BioSpark</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section id="programs" class="programs">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Programs</span>
+        <h2>Two seasons, one mission</h2>
+      </div>
+      <div class="programs-grid">
+        <div class="program-card reveal">
+          <div class="program-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+          </div>
+          <span class="program-season">Summer</span>
+          <h3>Summer Workshops</h3>
+          <p>A multi-week intensive where students run real experiments start to finish — from field collection to lab analysis.</p>
+          <ul class="program-list">
+            <li>Full-day, multi-week sessions</li>
+            <li>Small-group lab benches</li>
+            <li>Closing research showcase</li>
+          </ul>
+        </div>
+        <div class="program-card reveal">
+          <div class="program-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>
+          </div>
+          <span class="program-season">Fall</span>
+          <h3>Fall Workshops</h3>
+          <p>Weekly after-school sessions run through local BioSpark chapters, building toward one long-term project each term.</p>
+          <ul class="program-list">
+            <li>Weekly, chapter-based sessions</li>
+            <li>Student-led project teams</li>
+            <li>Mentor check-ins</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-info reveal" style="max-width:560px; margin:0 auto;">
+        <span class="eyebrow">Contact us</span>
+        <h2 style="font-size:2.1rem; margin:10px 0 18px;">Start a chapter, volunteer, or just say hi</h2>
+        <p>Whether you want to bring BioSpark to your school, volunteer at a camp, or support us as a donor — we'd love to hear from you.</p>
+        <div class="contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
+          <div><span class="label">Email</span>davidanandj23@gmail.com</div>
+        </div>
+        <div class="contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.4 2.1L8.1 9.7a16 16 0 006.2 6.2l1.2-1.2a2 2 0 012.1-.4c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>
+          <div><span class="label">Phone</span>+1 (469) 831-6715</div>
+        </div>
+        <div class="contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div><span class="label">Based in</span>Lewisville, TX</div>
+        </div>
+      </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <div class="logo">
+      <svg viewBox="0 0 26 26" fill="none" width="20" height="20"><circle cx="13" cy="13" r="12" fill="#1A2A1E"/><path d="M13 5 L15.2 11 L21.5 11 L16.3 14.8 L18.4 21 L13 17 L7.6 21 L9.7 14.8 L4.5 11 L10.8 11 Z" fill="#D7F238"/></svg>
+      BioSpark
+    </div>
+  </div>
+</footer>
+
+<script>
+  // mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navList = document.getElementById('navList');
+  navToggle.addEventListener('click', () => navList.classList.toggle('open'));
+  navList.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navList.classList.remove('open')));
+
+  // reveal on scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // stats are static placeholders (X / Y / Z) — no count-up needed
+</script>
+
+</body>
+</html>
