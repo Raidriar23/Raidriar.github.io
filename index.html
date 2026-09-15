@@ -428,29 +428,6 @@
   }
 
   /* ---------- RESPONSIVE ---------- */
-  @media (max-width: 860px){
-    .hero-grid, .about-grid, .contact-grid{grid-template-columns:1fr;}
-    .hero-art{max-width:340px; margin:0 auto;}
-    .stats-grid{grid-template-columns:1fr;}
-    .programs-grid{grid-template-columns:1fr;}
-    .about-grid{gap:40px;}
-    .polaroid{margin:0 auto;}
-    .nav-links .navlist{
-      position:fixed;
-      top:76px; left:0; right:0;
-      background:var(--paper);
-      flex-direction:column;
-      align-items:flex-start;
-      padding:24px 32px;
-      border-bottom:1px solid var(--line);
-      gap:18px;
-      display:none;
-    }
-    .nav-links .navlist.open{display:flex;}
-    .nav-links{gap:14px;}
-    .nav-toggle{display:block;}
-    .nav-donate{display:none;}
-  }
 </style>
 </head>
 <body>
@@ -465,9 +442,6 @@
       BioSpark
     </a>
     <div class="nav-links">
-      <button class="nav-toggle" aria-label="Toggle menu" id="navToggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
       <div class="navlist" id="navList">
         <a href="#about">About</a>
         <a href="#programs">Programs</a>
@@ -629,24 +603,7 @@
 </footer>
 
 <script>
-  // mobile nav toggle
-  const navToggle = document.getElementById('navToggle');
-  const navList = document.getElementById('navList');
-  navToggle.addEventListener('click', () => navList.classList.toggle('open'));
-  navList.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navList.classList.remove('open')));
-
-  // reveal on scroll
-  const revealEls = document.querySelectorAll('.reveal');
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-  revealEls.forEach(el => revealObserver.observe(el));
-
+  
   // stats are static placeholders (X / Y / Z) — no count-up needed
 </script>
 
